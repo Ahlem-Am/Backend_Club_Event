@@ -1,0 +1,77 @@
+const Event=require('../Model/Event')
+const mongoose=require('mongoose')
+
+const getAll=async(req,res,next)=>{
+    const events=await Event.find({});
+    try {
+        res.send(events);
+        } catch (error) {
+        res.status(500).send(error);
+        }
+       
+}
+
+/* ****************************** */
+const getOneEvent =(req,res,next)=>{
+    Event.findOne({_id:req.params.id})
+    .then((event)=>res.status(200).json( event
+    ))
+    .catch(error=>res.status(404).json({
+        error
+    }))
+
+    
+}
+
+/* ****************************** */
+const createEvent =(req,res,next)=>{
+    delete req.body._id
+    const NewEvent=new Event({
+        ...req.body
+    })
+    NewEvent.save()
+    .then(()=>res.status(201).json({
+        message: 'Event Saved'
+    }))
+    .catch(error=>res.status(400).json({
+        error
+    }))
+}
+/* ******************************* */
+const updateEvent=async(req,res)=>{
+        const event=await Event.findByIdAndUpdate(req.params.id, req.body,
+            {new:true,
+            runValidators:true}
+            );
+        try{
+        res.status(200).json({
+            message:"Success",
+            updatedEvent:event
+        });
+        } catch (error) {
+        res.status(500).send(error);
+        }
+
+   
+}
+
+/* ******************************** */
+const deleteEvent=async(req,res,next)=>{
+    try {
+        const event = await Event.findByIdAndDelete(req.params.id);
+        if (!event) res.status(404).send("No item found");
+        res.status(200).json({
+            message:"Success",
+            DeletedEvent:event
+        });
+        }
+     catch (error) {
+        res.status(500).send(error);
+        }
+
+   
+
+}
+
+
+module.exports={getAll,getOneEvent,createEvent,updateEvent,deleteEvent}
