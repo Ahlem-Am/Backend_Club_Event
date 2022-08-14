@@ -1,5 +1,8 @@
 const Event=require('../Model/Event')
-const mongoose=require('mongoose')
+const OT_Member=require('../Model/OT_Member')
+const Sponsor=require('../Model/Sponsor')
+
+
 
 const getAll=async(req,res,next)=>{
     const events=await Event.find({});
@@ -26,12 +29,14 @@ const getOneEvent =(req,res,next)=>{
 /* ****************************** */
 const createEvent =(req,res,next)=>{
     delete req.body._id
+    console.log(req.body)
     const NewEvent=new Event({
         ...req.body
     })
     NewEvent.save()
     .then(()=>res.status(201).json({
-        message: 'Event Saved'
+        message: 'Event Saved',
+        Event:NewEvent
     }))
     .catch(error=>res.status(400).json({
         error
@@ -73,5 +78,157 @@ const deleteEvent=async(req,res,next)=>{
 
 }
 
+/*
+* *******************************************************************************
+* *******************************************************************************
+*/
+const addMemberToEvent=async(req,res,next)=>{
+    try{
+        const member=await OT_Member.findById(req.body.member)
+    if(!member){
+    const event = await Event.findById(req.params.id);
+    const members=event.organizingTeam.map((item)=>{return {member:item.member}})
+    members.push({member:req.body.member})
+    event.organizingTeam=members
 
-module.exports={getAll,getOneEvent,createEvent,updateEvent,deleteEvent}
+  
+    event.save()
+    if (!event) res.status(404).send("No item found");
+    res.status(200).json({
+        message:"Success",
+        updatedEvent:event
+    });
+    }
+    else{
+        res.status(404).send("No member found"); 
+    }
+    }
+    catch(error){res.status(404).json({
+        error})
+    }
+
+    
+}
+const deleteMemberFromEvent=async(req,res,next)=>{
+    try{
+        const member=await OT_Member.findById(req.body.member)
+    if(!member){
+    const event = await Event.findById(req.params.id);
+    let members=event.organizingTeam.map((item)=>{return {member:item.member}})
+   let newmembers=members.filter((item)=>item.member!=req.body.member)
+   
+    event.organizingTeam=newmembers
+
+  
+    event.save()
+    if (!event) res.status(404).send("No item found");
+    res.status(200).json({
+        message:"Success",
+        updatedEvent:event
+    });
+    }
+    else{
+        res.status(404).send("No member found"); 
+    }
+    }
+    catch(error){res.status(404).json({
+        error})
+    }
+
+    
+}
+
+const showAllMembers=async(req,res)=>{
+    const event=await Event.findById(req.params.id).populate("organizingTeam.member")
+    
+    const members=event.organizingTeam
+    //console.log(JSON.stringify(members,null,"\t"))
+    const rslt=members.map((item)=>{
+        item.member.avatar=__dirname+item.member.avatar
+        return item })
+ 
+    try {
+        res.status(200).json(rslt);
+        } catch (error) {
+        res.status(500).send(error);
+        }
+}
+
+/*
+* *******************************************************************************
+* *******************************************************************************
+*/
+
+const addSponsorToEvent=async(req,res,next)=>{
+    try{
+        const sponsor=await Sponsor.findById(req.body.sponsor)
+        if(!sponsor){
+    const event = await Event.findById(req.params.id);
+    const sponsors=event.sponsors.map((item)=>{return {sponsor:item.sponsor}})
+    sponsors.push({sponsor:req.body.sponsor})
+    event.sponsors=sponsors
+
+  
+    event.save()
+    if (!event) res.status(404).send("No item found");
+    res.status(200).json({
+        message:"Success",
+        updatedEvent:event
+    });
+}
+    else{
+        res.status(404).send("No sponsor found"); 
+    }
+    }
+    catch(error){res.status(404).json({
+        error})
+    }
+
+    
+}
+const deleteSponsorFromEvent=async(req,res,next)=>{
+    try{
+        const sponsor=await Sponsor.findById(req.body.sponsor)
+        if(!sponsor){
+    const event = await Event.findById(req.params.id);
+    let sponsors=event.sponsors.map((item)=>{return {sponsor:item.sponsor}})
+   let newsponsors=sponsors.filter((item)=>item.sponsor!=req.body.sponsor)
+   
+    event.sponsors=newsponsors
+
+  
+    event.save()
+    if (!event) res.status(404).send("No item found");
+    res.status(200).json({
+        message:"Success",
+        updatedEvent:event
+    });}
+    else{
+        res.status(404).send("No sponsor found"); 
+    }
+    
+    }
+    catch(error){res.status(404).json({
+        error})
+    }
+
+    
+}
+
+const showAllSponsors=async(req,res)=>{
+    const event=await Event.findById(req.params.id).populate("sponsors.sponsor")
+    
+    const sponsors=event.sponsors
+    //console.log(JSON.stringify(members,null,"\t"))
+    const rslt=sponsors.map((item)=>{
+        item.sponsor.avatar=__dirname+item.sponsor.avatar
+        return item })
+ 
+    try {
+        res.status(200).json(rslt);
+        } catch (error) {
+        res.status(500).send(error);
+        }
+}
+
+module.exports={getAll,getOneEvent,createEvent,updateEvent,deleteEvent,addMemberToEvent,showAllMembers,deleteMemberFromEvent,addSponsorToEvent,deleteSponsorFromEvent,showAllSponsors}

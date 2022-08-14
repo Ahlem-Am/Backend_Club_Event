@@ -1,41 +1,39 @@
 const mongoose=require('mongoose')
 const { Schema, model } = mongoose;
+const timestampPlugin=require('./plugins/timestamp')
 
 
 const EventSchema = new Schema({
-    title: String,
-    eventDate: Date,
-    eventVenue:String,
-    /*eventDescription: String,
-    createdAt: Date,
-    updatedAt: Date,
+    title:{type:String,
+      required:true},
+    eventDate:{type:Date,
+      required:true},
+    eventVenue:{type:String,
+      required:true},
+    eventDescription:{type:String,
+      required:true},
     organizingTeam: [{
-         /*teamMember: {
+      member:{
           type:mongoose.Schema.Types.ObjectId,
-          ref:'TeamMember',
-          teamMember:String
-      }],
+          ref:'OT_Member'}
+      }
+      ],
     sponsors: [{
-      /*sponsor:{
+      sponsor:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'Sponsor' ,
-        sponsor:String
+        ref:'Sponsor' }
       }],
     eventExpenses:[{
         expense:{
             description:String,
-           // price:BigInt
+            price:Number
         }
-    }
+    }]
+    
 
-    ]
-    */
   });
 
-  //middelware:
-/*EventSchema.pre('save', function(next) {
-    this.updated = Date.now(); // update the date every time a event post is saved
-    next();
-  });*/
+  EventSchema.plugin(timestampPlugin)
+  
 const Event = model('Event', EventSchema);
 module.exports= Event

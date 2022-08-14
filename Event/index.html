@@ -6,19 +6,46 @@
     <body>
         <div>
             <h1> Home Page</h1>
-            <a href="/Events">Blogs</a>
+            <a href="/Events">Events</a>
         </div>
-        <form method="post" enctype="multipart/form-data" action="/Team_Member">
-            <input type="file" name="image">
-            <button type="submit ">sumbit</button>
-        </form>
+        
         <div>
+            <p> Add Event </p>
             <form method="post" action="/Events">
                 <input type="text" name="title" placeholder="title">
                 <input type="date" name="eventDate" placeholder="date">
                 <input type="text" name="eventVenue" placeholder="venue">
+                <input type="text" name="eventDescription" placeholder="description">
                 <button type="submit ">sumbit</button>
             </form>
+
+            <a href="/Events/62f79452572ce0fefa62a962">show event</a>
+        </div>
+        <div>
+            <p> Add Member </p>
+            <form method="post"enctype="multipart/form-data" action="/Team_Member">
+                <input type="text" name="name" placeholder="name">
+                <input type="text" name="surname" placeholder="surname">
+                <input type="text" name="email" placeholder="email">
+                <input type="tel" name="number" placeholder="phone">
+
+                <input type="file" name="image">
+                <button type="submit ">sumbit</button>
+            </form>
+        </div>
+
+        <div>
+            <p> Add Member to event avec l'id 62f5a69941c6a3f329e0251a </p>
+            <form method="post"  action="/Events/62f837551bec533dca93e69c/Member">
+                <input type="text" name="member" placeholder="Member id">
+    
+                <button type="submit ">sumbit</button>
+            </form>
+        </div>
+        
+        <div>
+            <a href="/Events/62f837551bec533dca93e69c/Member"> show all member of event avec l'id 62f837551bec533dca93e69c </a>
+            
         </div>
     </body>
 </html>
