@@ -231,4 +231,42 @@ const showAllSponsors=async(req,res)=>{
         }
 }
 
-module.exports={getAll,getOneEvent,createEvent,updateEvent,deleteEvent,addMemberToEvent,showAllMembers,deleteMemberFromEvent,addSponsorToEvent,deleteSponsorFromEvent,showAllSponsors}
+/*
+* *******************************************************************************
+* *******************************************************************************
+*/
+
+const addExpensesToEvent=async(req,res)=>{
+    try{
+    const event=await Event.findById(req.params.id)
+    const expenses=event.eventExpenses
+    expenses.push({expense:{
+    description:req.body.expenseDescription,
+    price:req.body.expensePrice}
+    })
+    event.eventExpenses=expenses
+    event.save()
+    if (!event) res.status(404).send("No item found");
+    res.status(200).json({
+        message:"Success",
+        updatedEvent:event
+    });}
+
+    catch(error){res.status(404).json({
+        error})
+    }
+    
+}
+const showAllExpenses=async(req,res)=>{
+    const event=await Event.findById(req.params.id)
+    
+    const expenses=event.eventExpenses
+  
+    try {
+        res.status(200).json(expenses);
+        } catch (error) {
+        res.status(500).send(error);
+        }
+}
+
+module.exports={getAll,getOneEvent,createEvent,updateEvent,deleteEvent,addMemberToEvent,showAllMembers,deleteMemberFromEvent,addSponsorToEvent,deleteSponsorFromEvent,showAllSponsors,addExpensesToEvent,showAllExpenses}
