@@ -21,7 +21,17 @@ const EventSchema = new Schema({
     sponsors: [{
       sponsor:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'Sponsor' }
+        ref:'Sponsor' 
+      },
+      services:[
+        {
+          service:{
+            name:String,
+            price:Number
+          }
+
+          }
+        ]
       }],
     eventExpenses:[{
         expense:{

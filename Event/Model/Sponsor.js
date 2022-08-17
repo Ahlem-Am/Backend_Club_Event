@@ -6,7 +6,7 @@ const timestampPlugin=require('./plugins/timestamp')
 const SponsorSchema=new Schema({
     name:{type:String,
         required:true},
-    service:{type:String,
+    domaine:{type:String,
         required:true},
     phone:
         {
